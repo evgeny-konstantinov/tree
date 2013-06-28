@@ -45,24 +45,33 @@
 				}
 			};
 
-			tree.addEventListener('nodeselect', eventListener);
+			/* 			tree.addEventListener('nodeselect', eventListener);
 
-			// test the removeEventListener method
-			tree.removeEventListener('nodeselect', eventListener);
+							// test the removeEventListener method
+							tree.removeEventListener('nodeselect', eventListener);
 
-			tree.addEventListener('nodeselect', eventListener);
+							tree.addEventListener('nodeselect', eventListener);
 
-			tree.addEventListener('nodeexpand', function(e) {
-				console.log(e.type + ' event fired on ' + e.relatedNode.label);
+							tree.addEventListener('nodeexpand', function(e) {
+								console.log(e.type + ' event fired on ' + e.relatedNode.label);
+							});
+
+							tree.addEventListener('nodecollapse', eventListener); */
+
+			document.getElementById('tree-container').addEventListener('click', function(e) {
+				debugger;
+				console.log(e);
+				e.stopPropagation();
+			});
+			document.getElementById('tree-container').addEventListener('click', function(e) {
+				debugger;
+				console.log(e);
+			});
+			document.getElementById('wrapper').addEventListener('click', function(e) {
+				debugger;
+				console.log(e);
 			});
 
-			tree.addEventListener('nodecollapse', eventListener);
-
-			var event = document.createEvent('Event');
-			debugger;
-			event.initEvent('myEvent', true, true);
-			tree.dispatchEvent(event);
-			console.log(event);
 		};
 	</script>
 </body>

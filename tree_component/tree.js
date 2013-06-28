@@ -30,8 +30,6 @@ function Tree(name) {
 	// tree's html representation
 	this.element = rootWrapper;
 	this.eventListeners = {};
-	this.selectedNode;
-	this.containerElement;
 };
 
 Tree.prototype.addChild = function(treeNode) {
@@ -41,9 +39,12 @@ Tree.prototype.addChild = function(treeNode) {
 Tree.prototype.addEventListener = function(type, listener) {
 	var self = this;
 	var wrapper = function(e) {
-		/*
-		 * e.target = e.srcElement; e.currentTarget = self;
-		 */
+		e.currentTarget = self;
+		if (e.currentTarget === e.targer) {
+			e.eventPhase = e.AT_TARGET;
+		}
+		// check if listener is EventListener object
+		// or just a function
 		if (listener.handleEvent) {
 			listener.handleEvent(e);
 		} else {
@@ -76,6 +77,10 @@ Tree.prototype.removeEventListener = function(type, listener) {
 };
 
 Tree.prototype.dispatchEvent = function(event) {
+	if (!event.type) {
+		throw DOMException(DOMException.INVALID_STATE_ERR, "InvalidStateError");
+	}
+	event.target = this;
 	var listeners = this.eventListeners[event.type];
 	if (!listeners) {
 		return;
@@ -106,11 +111,12 @@ function TreeNode(name) {
 	this.label = name;
 	// html representation of the node
 	this.element = TreeNode.prototype.createNodeElement(name);
-	this.element.getElementsByClassName(param.expanderClass)[0].addEventListener('click',
-			function() {
-				var expanded = that.element.classList.contains(param.closedClass);
-				that.setExpanded(expanded);
-			}, false);
+	this.element.getElementsByClassName(param.expanderClass)[0].addEventListener('click', function(
+			e) {
+		e.stopPropagation();
+		var expanded = that.element.classList.contains(param.closedClass);
+		that.setExpanded(expanded);
+	}, false);
 	this.element.getElementsByClassName(param.nodeContentClass)[0].addEventListener('click',
 			function() {
 				if (that === that.owner.selectedNode) {
@@ -256,14 +262,16 @@ TreeEvent.prototype = {
 	cancelable : false,
 	timestamp : new Date(0),
 	defaultPrevented : false,
-	isTrusted : false
-};
-
-TreeEvent.prototype.stopPropagation = function() {
-
+	isTrusted : false,
+	propagationStopped : false
 };
 
 TreeEvent.prototype.preventDefault = function() {
+	defaultPrevented = true;
+};
+
+TreeEvent.prototype.stopPropagation = function() {
+	propagationStopped = true;
 
 };
 
@@ -272,8 +280,12 @@ TreeEvent.prototype.stopImmediatePropagation = function() {
 };
 
 TreeEvent.prototype.initEvent = function(eventType, canBubbleArg, cancelableArg) {
+	if (this.eventPhase !== this.NONE) {
+		return;
+	}
 	this.type = eventType;
 	this.bubbles = canBubbleArg;
 	this.cancelable = cancelableArg;
 	this.timestamp = new Date();
+	this.defaultPrevented = false;
 };
