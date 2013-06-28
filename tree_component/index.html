@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>Tree component</title>
+<link rel="stylesheet" href="style.css" />
+<script src="tree.js"></script>
+</head>
+<body>
+	<div id="wrapper">
+		<h2>Tree component</h2>
+		<div id="tree-container"></div>
+	</div>
+	<script>
+		//Add the component to page
+		window.onload = function() {
+			var tree = new Tree('Root');
+			var treeNode1 = new TreeNode('node 1');
+			var treeNode2 = new TreeNode('node 2');
+			var treeNode3 = new TreeNode('node 3');
+			var treeNode4 = new TreeNode('node 4');
+			var treeNode5 = new TreeNode('node 5');
+			var treeNode6 = new TreeNode('node 6');
+			var treeNode7 = new TreeNode('node 8');
+			var treeNode8 = new TreeNode('node 9');
+			var treeNode9 = new TreeNode('node 10');
+			var treeNode10 = new TreeNode('node 11');
+
+			tree.addChild(treeNode1);
+			tree.addChild(treeNode2);
+			tree.addChild(treeNode3);
+			treeNode1.addChild(treeNode4);
+			treeNode1.addChild(treeNode5);
+			treeNode1.addChild(treeNode6);
+			treeNode4.addChild(treeNode7);
+			treeNode4.addChild(treeNode8);
+			treeNode7.addChild(treeNode9);
+			treeNode2.addChild(treeNode10);
+
+			tree.appendTo(document.getElementById('tree-container'));
+
+			var eventListener = {
+				handleEvent : function(event) {
+					console.log(event.type + ' event fired on ' + event.relatedNode.label);
+				}
+			};
+
+			tree.addEventListener('nodeselect', eventListener);
+
+			// test the removeEventListener method
+			tree.removeEventListener('nodeselect', eventListener);
+
+			tree.addEventListener('nodeselect', eventListener);
+
+			tree.addEventListener('nodeexpand', function(e) {
+				console.log(e.type + ' event fired on ' + e.relatedNode.label);
+			});
+
+			tree.addEventListener('nodecollapse', eventListener);
+
+			var event = document.createEvent('Event');
+			debugger;
+			event.initEvent('myEvent', true, true);
+			tree.dispatchEvent(event);
+			console.log(event);
+		};
+	</script>
+</body>
+</html>
